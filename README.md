@@ -20,9 +20,9 @@ To use a Elixir DocuSign API, you should have a private/public keypair and Integ
 ## Usage
 
 1. Clone this repository;
-2. Add your docusign private key to the project root as `docusign_key.pem` (or specify a path as a DOCUSIGN_PRIVATE_KEY env variable);
-3. Set your Integration ID as DOCUSIGN_CLIENT_ID env variable;
-4. Set your API Account ID as DOCUSIGN_USER_ID env variable;
+2. Add your docusign private key to the project root as `docusign_key.pem` (or specify a path as a `DOCUSIGN_PRIVATE_KEY` env variable);
+3. Set your Integration ID as `DOCUSIGN_CLIENT_ID` env variable;
+4. Set your API Account ID as `DOCUSIGN_USER_ID` env variable;
 5. Run:
 ```
 mix deps.get
@@ -30,7 +30,6 @@ mix compile
 mix docusign.example
 ```
 
-Alternatively, you can run sample functions in the IEx session. To do so, just run:
-1. `iex -S mix`
-2. DocusignElixirSampleApp.get_envelopes()
-3. DocusignElixirSampleApp.send_envelop()
+Alternatively, you can run sample functions in the IEx session. To do so, just run `iex -S mix` and call those functions:
+* `DocusignElixirSampleApp.get_envelopes()`
+* `DocusignElixirSampleApp.send_envelop()`

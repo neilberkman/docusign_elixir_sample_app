@@ -24,7 +24,8 @@ defmodule DocusignElixirSampleApp.MixProject do
   defp deps do
     [
       {:docusign, path: "../docusign_elixir"},
-      {:timex, "~> 3.4"}
+      {:timex, "~> 3.4"},
+      {:hackney, "~> 1.6"}
     ]
   end
 

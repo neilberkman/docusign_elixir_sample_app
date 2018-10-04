@@ -8,3 +8,5 @@ config :docusign, hostname: "account-d.docusign.com"
 config :docusign, client_id: System.get_env("DOCUSIGN_CLIENT_ID")
 config :docusign, user_id: System.get_env("DOCUSIGN_USER_ID")
 config :docusign, account_id: System.get_env("DOCUSIGN_ACCOUNT_ID")
+
+config :tesla, :adapter, Tesla.Adapter.Hackney

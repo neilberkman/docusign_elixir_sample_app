@@ -62,6 +62,9 @@ defmodule DocusignElixirSampleApp do
     end
   end
 
-  defp connection, do: DocuSign.Connection.new(client: DocuSign.APIClient.client())
+  defp connection do
+    DocuSign.Connection.new
+    |> DocuSign.Connection.Request.new
+  end
   defp account_id, do: Application.get_env(:docusign, :account_id)
 end

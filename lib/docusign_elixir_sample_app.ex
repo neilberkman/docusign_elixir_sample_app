@@ -5,6 +5,12 @@ defmodule DocusignElixirSampleApp do
   require Logger
   alias DocuSign.Api
 
+  defp unique_id() do
+    ((Timex.to_gregorian_microseconds(Timex.now()) -
+      Timex.to_gregorian_microseconds(Timex.today())) / 1000
+    ) |> Kernel.round
+  end
+
   @doc """
   Fetches all envelopes younger than 30 days.
   """
@@ -44,11 +50,7 @@ defmodule DocusignElixirSampleApp do
           documentBase64: Base.encode64(File.read!("priv/samples/sample.#{ext}")),
           name: "elixir.#{ext}",
           fileExtension: ext,
-          documentId: (
-            ((Timex.to_gregorian_microseconds(Timex.now()) -
-              Timex.to_gregorian_microseconds(Timex.today())) / 1000
-            ) |> Kernel.round
-          )
+          documentId: unique_id()
         }
       end)
 

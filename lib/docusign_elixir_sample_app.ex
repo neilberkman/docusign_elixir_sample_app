@@ -38,7 +38,11 @@ defmodule DocusignElixirSampleApp do
           documentBase64: Base.encode64(File.read!("priv/samples/sample.#{ext}")),
           name: "elixir.#{ext}",
           fileExtension: ext,
-          documentId: Timex.to_unix(Timex.now())
+          documentId: (
+            ((Timex.to_gregorian_microseconds(Timex.now()) -
+              Timex.to_gregorian_microseconds(Timex.today())) / 1000
+            ) |> Kernel.round
+          )
         }
       end)
 
@@ -49,12 +53,14 @@ defmodule DocusignElixirSampleApp do
 
     Logger.debug("Sending envelopes...")
 
-    case Api.Envelopes.envelopes_post_envelopes(connection(), account_id(),
-           envelopeDefinition: definition
-         ) do
+    case Api.Envelopes.envelopes_post_envelopes(connection(), account_id(), body: definition) do
       {:ok, %DocuSign.Model.EnvelopeSummary{} = envelope_summary} ->
         Logger.debug("Envelopes has been sent.")
         envelope_summary
+
+      {:ok, %DocuSign.Model.ErrorDetails{} = error} ->
+        Logger.error(inspect(error))
+        {:error, error}
 
       {:error, %Tesla.Env{body: error}} ->
         Logger.error(inspect(error))
@@ -62,9 +68,6 @@ defmodule DocusignElixirSampleApp do
     end
   end
 
-  defp connection do
-    DocuSign.Connection.new
-    |> DocuSign.Connection.Request.new
-  end
+  defp connection, do: DocuSign.Connection.new()
   defp account_id, do: Application.get_env(:docusign, :account_id)
 end

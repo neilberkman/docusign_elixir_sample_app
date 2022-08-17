@@ -14,10 +14,16 @@ defmodule DocusignElixirSampleApp do
     Logger.debug("Fetching envelopes...")
 
     # There's a mismatch in 1st param type here and in func spec
-    case Api.Envelopes.envelopes_get_envelopes(connection(), account_id(), from_date: from_date) do
-      {:ok, %DocuSign.Model.EnvelopesInformation{envelopes: envelopes} = info} ->
-        Logger.debug("Fetched envelopes: #{inspect(info)}")
+    case Api.Envelopes.envelopes_get_envelopes(
+      connection(), account_id(), from_date: from_date # , status: "created"
+    ) do
+      {:ok, %DocuSign.Model.EnvelopesInformation{envelopes: envelopes}} ->
+        Logger.debug("Fetched envelopes: #{inspect(envelopes)}")
         {:ok, envelopes}
+
+      {:ok, %DocuSign.Model.ErrorDetails{} = error} ->
+        Logger.error(inspect(error))
+        {:error, error}
 
       {:error, %Tesla.Env{body: error}} ->
         Logger.error(inspect(error))
@@ -53,7 +59,9 @@ defmodule DocusignElixirSampleApp do
 
     Logger.debug("Sending envelopes...")
 
-    case Api.Envelopes.envelopes_post_envelopes(connection(), account_id(), body: definition) do
+    case Api.Envelopes.envelopes_post_envelopes(
+      connection(), account_id(), body: definition
+    ) do
       {:ok, %DocuSign.Model.EnvelopeSummary{} = summary} ->
         Logger.debug("Envelopes has been sent: #{inspect(summary)}")
         {:ok, summary}

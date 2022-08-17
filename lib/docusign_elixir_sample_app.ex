@@ -10,13 +10,13 @@ defmodule DocusignElixirSampleApp do
   """
   @spec get_envelopes :: {:ok, list(DocuSign.Model.Envelopes.t())} | {:error, binary}
   def get_envelopes do
-    from_date = Timex.shift(Date.utc_today(), days: -30)
+    from_date = Timex.shift(Timex.today(), days: -30)
     Logger.debug("Fetching envelopes...")
 
     # There's a mismatch in 1st param type here and in func spec
     case Api.Envelopes.envelopes_get_envelopes(connection(), account_id(), from_date: from_date) do
-      {:ok, %DocuSign.Model.EnvelopesInformation{envelopes: envelopes}} ->
-        Logger.debug("Fetched envelopes: #{inspect(envelopes)}")
+      {:ok, %DocuSign.Model.EnvelopesInformation{envelopes: envelopes} = info} ->
+        Logger.debug("Fetched envelopes: #{inspect(info)}")
         {:ok, envelopes}
 
       {:error, %Tesla.Env{body: error}} ->
@@ -54,9 +54,9 @@ defmodule DocusignElixirSampleApp do
     Logger.debug("Sending envelopes...")
 
     case Api.Envelopes.envelopes_post_envelopes(connection(), account_id(), body: definition) do
-      {:ok, %DocuSign.Model.EnvelopeSummary{} = envelope_summary} ->
-        Logger.debug("Envelopes has been sent.")
-        envelope_summary
+      {:ok, %DocuSign.Model.EnvelopeSummary{} = summary} ->
+        Logger.debug("Envelopes has been sent: #{inspect(summary)}")
+        {:ok, summary}
 
       {:ok, %DocuSign.Model.ErrorDetails{} = error} ->
         Logger.error(inspect(error))

@@ -15,7 +15,7 @@ List the envelopes in the account that are less than 30 days old.
 
 ## Configure DocuSign
 
-To use the Elixir DocuSign API, you should have a private/public keypair and Integrator Key generated. You can set it up from the [Go to Admin](https://admindemo.docusign.com/api-integrator-key) page in your profile.
+To use the Elixir DocuSign API, you should have a private / public keypair and integration key generated. You can set it up from the [Go to Admin](https://admindemo.docusign.com/api-integrator-key) page in your profile.
 
 ## Usage
 

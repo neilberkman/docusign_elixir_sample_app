@@ -10,12 +10,11 @@ defmodule DocusignElixirSampleApp do
   """
   @spec get_envelopes :: {:ok, list(DocuSign.Model.Envelopes.t())} | {:error, binary}
   def get_envelopes do
-    from_date = Date.add Date.utc_today, -30
     Logger.debug("Fetching envelopes...")
 
     # There's a mismatch in 1st param type here and in func spec
     case Api.Envelopes.envelopes_get_envelopes(
-      connection(), account_id(), from_date: from_date, status: "created"
+      connection(), account_id(), from_date: Date.add(Date.utc_today, -30), status: "created"
     ) do
       {:ok, %DocuSign.Model.EnvelopesInformation{envelopes: envelopes}} ->
         Logger.debug("Fetched envelopes: #{inspect(envelopes)}")

@@ -5,23 +5,17 @@ defmodule DocusignElixirSampleApp do
   require Logger
   alias DocuSign.Api
 
-  defp unique_id() do
-    ((Timex.to_gregorian_microseconds(Timex.now()) -
-      Timex.to_gregorian_microseconds(Timex.today())) / 1000
-    ) |> Kernel.round
-  end
-
   @doc """
   Fetches all envelopes younger than 30 days.
   """
   @spec get_envelopes :: {:ok, list(DocuSign.Model.Envelopes.t())} | {:error, binary}
   def get_envelopes do
-    from_date = Timex.shift(Timex.today(), days: -30)
+    from_date = Date.add Date.utc_today, -30
     Logger.debug("Fetching envelopes...")
 
     # There's a mismatch in 1st param type here and in func spec
     case Api.Envelopes.envelopes_get_envelopes(
-      connection(), account_id(), from_date: from_date # , status: "created"
+      connection(), account_id(), from_date: from_date, status: "created"
     ) do
       {:ok, %DocuSign.Model.EnvelopesInformation{envelopes: envelopes}} ->
         Logger.debug("Fetched envelopes: #{inspect(envelopes)}")
@@ -50,7 +44,7 @@ defmodule DocusignElixirSampleApp do
           documentBase64: Base.encode64(File.read!("priv/samples/sample.#{ext}")),
           name: "elixir.#{ext}",
           fileExtension: ext,
-          documentId: unique_id()
+          documentId: DateTime.utc_now.microsecond |> Kernel.elem(0)
         }
       end)
 

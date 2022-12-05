@@ -23,8 +23,8 @@ defmodule DocusignElixirSampleApp.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:docusign, git: "https://github.com/neilberkman/docusign_elixir.git", tag: "0.5.2"},
-      {:timex, "~> 3.4"},
+      # {:docusign, "~> 0.4.4"},
+      {:docusign, git: "https://github.com/un3481/docusign_elixir.git"},
       {:hackney, "~> 1.6"}
     ]
   end

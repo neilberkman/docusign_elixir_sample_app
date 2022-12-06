@@ -14,7 +14,7 @@ defmodule DocusignElixirSampleApp do
 
     # There's a mismatch in 1st param type here and in func spec
     case Api.Envelopes.envelopes_get_envelopes(
-      connection(), account_id(), from_date: Date.add(Date.utc_today, -30), status: "created"
+      connection(), account_id(), from_date: Date.add(Date.utc_today(), -30)
     ) do
       {:ok, %DocuSign.Model.EnvelopesInformation{envelopes: envelopes}} ->
         Logger.debug("Fetched envelopes: #{inspect(envelopes)}")
@@ -43,7 +43,7 @@ defmodule DocusignElixirSampleApp do
           documentBase64: Base.encode64(File.read!("priv/samples/sample.#{ext}")),
           name: "elixir.#{ext}",
           fileExtension: ext,
-          documentId: DateTime.utc_now.microsecond |> Kernel.elem(0)
+          documentId: DateTime.utc_now().microsecond |> Kernel.elem(0)
         }
       end)
 

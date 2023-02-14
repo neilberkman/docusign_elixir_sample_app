@@ -10,14 +10,19 @@ defmodule DocusignElixirSampleApp do
   """
   @spec get_envelopes :: {:ok, list(DocuSign.Model.Envelopes.t())} | {:error, binary}
   def get_envelopes do
-    from_date = Timex.shift(Date.utc_today(), days: -30)
     Logger.debug("Fetching envelopes...")
 
     # There's a mismatch in 1st param type here and in func spec
-    case Api.Envelopes.envelopes_get_envelopes(connection(), account_id(), from_date: from_date) do
+    case Api.Envelopes.envelopes_get_envelopes(
+      connection(), account_id(), from_date: Date.add(Date.utc_today(), -30)
+    ) do
       {:ok, %DocuSign.Model.EnvelopesInformation{envelopes: envelopes}} ->
         Logger.debug("Fetched envelopes: #{inspect(envelopes)}")
         {:ok, envelopes}
+
+      {:ok, %DocuSign.Model.ErrorDetails{} = error} ->
+        Logger.error(inspect(error))
+        {:error, error}
 
       {:error, %Tesla.Env{body: error}} ->
         Logger.error(inspect(error))
@@ -38,7 +43,7 @@ defmodule DocusignElixirSampleApp do
           documentBase64: Base.encode64(File.read!("priv/samples/sample.#{ext}")),
           name: "elixir.#{ext}",
           fileExtension: ext,
-          documentId: Timex.to_unix(Timex.now())
+          documentId: DateTime.utc_now().microsecond |> Kernel.elem(0)
         }
       end)
 
@@ -49,12 +54,16 @@ defmodule DocusignElixirSampleApp do
 
     Logger.debug("Sending envelopes...")
 
-    case Api.Envelopes.envelopes_post_envelopes(connection(), account_id(),
-           envelopeDefinition: definition
-         ) do
-      {:ok, %DocuSign.Model.EnvelopeSummary{} = envelope_summary} ->
-        Logger.debug("Envelopes has been sent.")
-        envelope_summary
+    case Api.Envelopes.envelopes_post_envelopes(
+      connection(), account_id(), body: definition
+    ) do
+      {:ok, %DocuSign.Model.EnvelopeSummary{} = summary} ->
+        Logger.debug("Envelopes has been sent: #{inspect(summary)}")
+        {:ok, summary}
+
+      {:ok, %DocuSign.Model.ErrorDetails{} = error} ->
+        Logger.error(inspect(error))
+        {:error, error}
 
       {:error, %Tesla.Env{body: error}} ->
         Logger.error(inspect(error))
@@ -62,6 +71,6 @@ defmodule DocusignElixirSampleApp do
     end
   end
 
-  defp connection, do: DocuSign.Connection.new(client: DocuSign.APIClient.client())
+  defp connection, do: DocuSign.Connection.new()
   defp account_id, do: Application.get_env(:docusign, :account_id)
 end

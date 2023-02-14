@@ -4,7 +4,7 @@ defmodule DocusignElixirSampleApp.MixProject do
   def project do
     [
       app: :docusign_elixir_sample_app,
-      version: "0.1.0",
+      version: "0.2.0",
       elixir: "~> 1.7",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -23,8 +23,8 @@ defmodule DocusignElixirSampleApp.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:docusign, "~> 0.1"},
-      {:timex, "~> 3.4"},
+      # {:docusign, "~> 0.4.4"},
+      {:docusign, git: "https://github.com/un3481/docusign_elixir.git"},
       {:hackney, "~> 1.6"}
     ]
   end
